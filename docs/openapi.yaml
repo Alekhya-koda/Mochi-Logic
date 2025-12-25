@@ -1,0 +1,294 @@
+openapi: 3.1.0
+info:
+  title: AI Counselor Backend API
+  version: "0.1.0"
+  description: |
+    Web-only MVP backend for private reflection, partner-aligned insights, screenings, and gentle escalation.
+servers:
+  - url: https://api.example.com
+paths:
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+              required: [email, password]
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+  /auth/logout:
+    post:
+      summary: Logout
+      responses:
+        "200": { description: Logged out }
+  /auth/me:
+    get:
+      summary: Current user
+      responses:
+        "200":
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+  /partners/invite:
+    post:
+      summary: Invite partner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, format: email }
+              required: [email]
+      responses:
+        "200": { description: Invite sent }
+  /partners/accept:
+    post:
+      summary: Accept invite
+      parameters:
+        - in: query
+          name: token
+          schema: { type: string }
+      responses:
+        "200": { description: Invite accepted }
+  /partners/status:
+    get:
+      summary: Partner link status
+      responses:
+        "200": { description: Status returned }
+  /conversations:
+    post:
+      summary: Create conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id: { type: string, format: uuid }
+                type: { type: string, enum: [private, shared] }
+              required: [user_id]
+      responses:
+        "200":
+          description: Conversation created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, format: uuid }
+                  status: { type: string }
+  /conversations/{conversation_id}/messages:
+    get:
+      summary: Fetch conversation history
+      parameters:
+        - in: path
+          name: conversation_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Message list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string, format: uuid }
+                        content: { type: string }
+                        author_type: { type: string }
+  /messages:
+    post:
+      summary: Post message and get assistant reply
+      description: Ingest message, build context with RAG, call GPT-5.2, and store response plus summary stub.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id: { type: string, format: uuid }
+                user_id: { type: string, format: uuid }
+                content: { type: string }
+              required: [conversation_id, user_id, content]
+      responses:
+        "200":
+          description: Assistant reply returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_message_id: { type: string, format: uuid }
+                  assistant_message_id: { type: string, format: uuid }
+                  assistant_summary_id: { type: string, format: uuid }
+                  content: { type: string }
+  /summaries/latest:
+    get:
+      summary: Fetch latest summaries
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Latest summaries
+  /summaries:
+    post:
+      summary: Create or update summary artifacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id: { type: string, format: uuid }
+                user_id: { type: string, format: uuid }
+                summary_text: { type: string }
+                themes:
+                  type: array
+                  items: { type: string }
+                confidence: { type: integer }
+              required: [conversation_id, user_id, summary_text]
+      responses:
+        "200": { description: Summary created }
+  /consents:
+    get:
+      summary: List consents
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Consents listed }
+  /consents/grant:
+    post:
+      summary: Grant consent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id: { type: string, format: uuid }
+                scope: { type: string }
+                target_partner_id: { type: string, format: uuid }
+              required: [user_id, scope]
+      responses:
+        "200": { description: Consent granted }
+  /consents/revoke:
+    post:
+      summary: Revoke consent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id: { type: string, format: uuid }
+                scope: { type: string }
+                target_partner_id: { type: string, format: uuid }
+              required: [user_id, scope]
+      responses:
+        "200": { description: Consent revoked }
+  /insights:
+    get:
+      summary: List partner-visible insights (consent enforced)
+      parameters:
+        - in: query
+          name: viewer_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Insights list }
+  /screenings:
+    post:
+      summary: Submit screening
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id: { type: string, format: uuid }
+                instrument: { type: string }
+                answers: { type: object, additionalProperties: true }
+              required: [user_id, instrument, answers]
+      responses:
+        "200": { description: Screening stored and trend calculated }
+  /screenings/history:
+    get:
+      summary: Screening history
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Screening list }
+  /risk-events:
+    get:
+      summary: List risk events (admin)
+      responses:
+        "200": { description: Risk events returned }
+  /escalations/prepare:
+    post:
+      summary: Prepare escalation session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items: { type: string, format: uuid }
+                allowed_context_ids:
+                  type: array
+                  items: { type: string, format: uuid }
+              required: [participants, allowed_context_ids]
+      responses:
+        "200": { description: Session prepared }
+  /escalations/{session_id}:
+    get:
+      summary: Get session context
+      parameters:
+        - in: path
+          name: session_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Session context returned }
