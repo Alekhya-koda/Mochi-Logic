@@ -110,6 +110,25 @@ class AuditLog:
     created_at: datetime = field(default_factory=datetime.utcnow)
 
 
+@dataclass
+class User:
+    id: str
+    email: str
+    password_hash: str
+    name: str | None = None
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+
+@dataclass
+class PartnerLinkRecord:
+    id: str
+    user_id: str
+    partner_user_id: Optional[str]
+    status: str = "pending"
+    token: Optional[str] = None
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+
 class InMemoryStore:
     def __init__(self) -> None:
         self.conversations: Dict[str, Conversation] = {}
@@ -122,6 +141,9 @@ class InMemoryStore:
         self.risk_events: List[RiskEvent] = []
         self.sessions: Dict[str, Session] = {}
         self.audit_logs: List[AuditLog] = []
+        self.users: List[User] = []
+        self.partner_links: List[PartnerLinkRecord] = []
+        self.tokens: Dict[str, str] = {}  # token -> user_id
 
     # Conversation and messages
     def create_conversation(self, user_id: str, conv_type: str = "private") -> Conversation:
@@ -129,6 +151,12 @@ class InMemoryStore:
         self.conversations[conv.id] = conv
         self.messages[conv.id] = []
         return conv
+
+    def latest_conversation_for_user(self, user_id: str) -> Conversation | None:
+        for conv in reversed(list(self.conversations.values())):
+            if conv.user_id == user_id:
+                return conv
+        return None
 
     def add_message(self, conversation_id: str, author_type: str, content: str) -> Message:
         msg = Message(id=_id(), conversation_id=conversation_id, author_type=author_type, content=content)
@@ -209,6 +237,48 @@ class InMemoryStore:
         log = AuditLog(id=_id(), actor=actor, action=action, payload_meta=payload_meta, risk_level=risk_level)
         self.audit_logs.append(log)
         return log
+
+    # Users and auth tokens
+    def add_user(self, email: str, password_hash: str, name: str | None = None) -> User:
+        user = User(id=_id(), email=email.lower(), password_hash=password_hash, name=name)
+        self.users.append(user)
+        return user
+
+    def find_user_by_email(self, email: str) -> Optional[User]:
+        email = email.lower()
+        return next((u for u in self.users if u.email == email), None)
+
+    def store_token(self, token: str, user_id: str) -> None:
+        self.tokens[token] = user_id
+
+    def get_user_by_token(self, token: str) -> Optional[User]:
+        uid = self.tokens.get(token)
+        if not uid:
+            return None
+        return next((u for u in self.users if u.id == uid), None)
+
+    # Partner linking
+    def create_partner_link(self, user_id: str, token: str) -> PartnerLinkRecord:
+        rec = PartnerLinkRecord(id=_id(), user_id=user_id, partner_user_id=None, status="pending", token=token)
+        self.partner_links.append(rec)
+        return rec
+
+    def accept_partner_link(self, token: str, partner_user_id: str) -> Optional[PartnerLinkRecord]:
+        for rec in self.partner_links:
+            if rec.token == token and rec.status == "pending":
+                rec.partner_user_id = partner_user_id
+                rec.status = "linked"
+                return rec
+        return None
+
+    def partner_status(self, user_id: str) -> Optional[PartnerLinkRecord]:
+        return next((r for r in self.partner_links if r.user_id == user_id or r.partner_user_id == user_id), None)
+
+    def linked_partner_id(self, user_id: str) -> Optional[str]:
+        rec = self.partner_status(user_id)
+        if not rec or rec.status != "linked":
+            return None
+        return rec.partner_user_id if rec.user_id == user_id else rec.user_id
 
 
 store = InMemoryStore()

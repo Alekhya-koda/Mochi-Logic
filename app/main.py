@@ -13,6 +13,7 @@ from .api.routers import (
     insights_router,
     messages_router,
     partners_router,
+    couple_router,
     risk_events_router,
     screenings_router,
     summaries_router,
@@ -31,6 +32,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(partners_router)
+app.include_router(couple_router)
 app.include_router(conversations_router)
 app.include_router(messages_router)
 app.include_router(summaries_router)

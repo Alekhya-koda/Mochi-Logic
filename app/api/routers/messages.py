@@ -43,6 +43,18 @@ async def post_message(payload: MessageRequest, store=Depends(get_store)):
     history = await convo_service.list_messages(str(payload.conversation_id), limit=5)
     context = [{"role": "assistant" if m.author_type == "assistant" else "user", "content": m.content} for m in history]
 
+    # Pull partner context if linked (limited messages)
+    partner_context = []
+    link = store.partner_status(str(payload.user_id))
+    if link and link.status == "linked":
+        partner_id = link.partner_user_id if link.user_id == str(payload.user_id) else link.user_id
+        partner_conv = store.latest_conversation_for_user(partner_id) if partner_id else None
+        if partner_conv:
+            partner_msgs = store.list_messages(partner_conv.id, limit=5)
+            for pm in partner_msgs:
+                partner_context.append({"role": "user", "content": f"[Partner] {pm.content}"})
+    context.extend(partner_context)
+
     retrieved = await rag_service.retrieve(payload.content)
     for item in retrieved:
         context.append({"role": "system", "content": item.get("content", "")})

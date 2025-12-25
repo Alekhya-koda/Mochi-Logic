@@ -13,6 +13,7 @@ dependencies = [
     "alembic>=1.13",
     "pgvector~=0.2.5",
     "aiosqlite>=0.19",
+    "email-validator>=2.1",
 ]
 
 [project.optional-dependencies]
