@@ -1,14 +1,14 @@
 # Mochi Logic
 
 <div align="center">
-  <img src="./Logo.jpg" alt="Logo" width="200"/>
+  <img src="./Logo.jpg" alt="Mochi Logic Logo" width="200"/>
 </div>
 
 ---
 
 ## Overview
 
-MocchiLogic provides a web-based platform for couples experiencing emotional and psychological changes during pregnancy and the postpartum period. By combining individual reflection spaces, regular mental health screening, and AI-facilitated group conversations, the system helps partners interpret emotional changes together—reducing misunderstanding and relationship strain.
+Mochi Logic provides a web-based platform for couples experiencing emotional and psychological changes during pregnancy and the postpartum period. By combining individual reflection spaces, regular mental health screening, and AI-facilitated group conversations, the system helps partners interpret emotional changes together—reducing misunderstanding and relationship strain.
 
 ##  Key Features
 
@@ -30,7 +30,7 @@ During pregnancy and postpartum, emotional changes are often misinterpreted as:
 This confusion amplifies conflict during an already vulnerable period, yet couples lack shared frameworks to understand these changes together.
 
 ### The Solution
-MocchiLogic creates **interpretation before reaction**—helping both partners understand the same emotional reality at the same time, without diagnosis, prescription, or judgment.
+Mochi Logic creates **interpretation before reaction**—helping both partners understand the same emotional reality at the same time, without diagnosis, prescription, or judgment.
 
 ## Architecture
 
