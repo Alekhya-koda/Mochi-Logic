@@ -1,0 +1,117 @@
+.auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #e0c3fc 100%);
+    padding: var(--space-lg);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.auth-title {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff9a8b 0%, #a8c0ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-sm);
+}
+
+.auth-tagline {
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+}
+
+.auth-card {
+    margin-bottom: var(--space-xl);
+}
+
+.form-group {
+    margin-bottom: var(--space-xl);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.form-group input {
+    width: 100%;
+}
+
+.partner-select {
+    text-align: center;
+}
+
+.partner-select h3 {
+    margin-bottom: var(--space-sm);
+}
+
+.partner-select p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xl);
+}
+
+.partner-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.partner-option {
+    background: var(--color-bg-tertiary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-align: left;
+}
+
+.partner-option:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.partner-label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.partner-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.auth-disclaimer {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.8;
+}
+
+.auth-disclaimer p {
+    margin-bottom: var(--space-sm);
+}
+
+@media (max-width: 768px) {
+    .auth-title {
+        font-size: 2.5rem;
+    }
+}

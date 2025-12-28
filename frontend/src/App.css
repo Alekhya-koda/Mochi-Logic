@@ -1,0 +1,45 @@
+.app {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.complete-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  padding: var(--space-xl);
+}
+
+.complete-container {
+  max-width: 600px;
+  text-align: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3xl);
+  box-shadow: var(--glass-shadow);
+}
+
+.complete-container h1 {
+  margin-bottom: var(--space-xl);
+  background: var(--gradient-calm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.complete-container p {
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.complete-message {
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  margin-top: var(--space-xl);
+}
