@@ -1,7 +1,7 @@
 # Mochi Logic
 
 <div align="center">
-  <img src="./AppLogo.jpeg" alt="MocchiLogic Logo" width="200"/>
+  <img src="./Logo.jpeg" alt="Logo" width="200"/>
 </div>
 
 ---
