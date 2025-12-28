@@ -1,9 +1,9 @@
 # Mochi Logic
 
 <div align="center">
-  <img src="./Logo.jpeg" alt="Logo" width="200"/>
+  <img src="./Logo.jpg" alt="Mochi Logic Logo" width="200"/>
 </div>
----
+-----------------------
 
 ## Overview
 
